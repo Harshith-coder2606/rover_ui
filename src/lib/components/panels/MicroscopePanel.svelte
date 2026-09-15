@@ -164,10 +164,12 @@
 		client.onError((e) => console.error(`[MicroscopePanel] WebRTC error:`, e));
 
 		const offerUrl = `${roverApi.getApiBaseUrl()}/api/sci/microscope/webrtc/offer`;
-		client.connect(offerUrl, videoRef, 30).then(() => {
+		client.connect(offerUrl, videoRef).then(() => {
+			if (webrtcClient !== client) return;
 			webrtcRetryCount = 0;
 			startWebRtcStatusPolling();
 		}).catch((err: Error & { status?: number }) => {
+			if (err.name === 'AbortError' || webrtcClient !== client) return;
 			if (err.status === 429) {
 				showFeedbackMsg('Too many viewers — falling back to MJPEG', 'error');
 				streamingMode = 'mjpeg';
@@ -195,12 +197,14 @@
 
 	// Stop WebRTC stream
 	async function stopWebRtcStream() {
-		if (!webrtcClient) return;
-		const deleteUrl = `${roverApi.getApiBaseUrl()}/api/sci/microscope/webrtc`;
-		await webrtcClient.disconnect(deleteUrl);
+		if (webrtcRetryTimer) clearTimeout(webrtcRetryTimer);
+		webrtcRetryTimer = null;
+		webrtcRetryCount = 0;
+		const client = webrtcClient;
 		webrtcClient = null;
 		stopWebRtcStatusPolling();
 		webrtcStatus = null;
+		await client?.disconnect();
 	}
 
 	function startWebRtcStatusPolling() {
@@ -209,11 +213,7 @@
 			try {
 				const st = await roverApi.getMicroscopeWebRtcStatus();
 				webrtcStatus = { active_connections: st.active_connections, max_connections: st.max_connections ?? 5 };
-				if (st.active_connections >= (st.max_connections ?? 5) && streamingMode === 'webrtc') {
-					showFeedbackMsg('Full — WebRTC unavailable, switching to MJPEG', 'error');
-					await stopWebRtcStream();
-					streamingMode = 'mjpeg';
-				}
+				// Capacity limits new offers, not viewers already connected.
 			} catch { /* ignore */ }
 		}, 5000);
 	}

@@ -5,6 +5,8 @@
  * Handles connection management, frame decoding, canvas rendering, and performance metrics.
  */
 
+import { JpegQualityController } from './jpegQualityController.js';
+
 // Protocol constants (must match backend)
 const MAGIC_NUMBER = 0x524F5652; // "ROVR" in ASCII
 const HEADER_SIZE = 24;
@@ -24,6 +26,9 @@ export interface DecodedFrame {
 }
 
 export interface StreamMetrics {
+	bitrateBps?: number;
+	quality?: number;
+	targetFps?: number;
 	fps: number;
 	avgLatencyMs: number;
 	minLatencyMs: number;
@@ -35,6 +40,7 @@ export interface StreamMetrics {
 }
 
 export interface StreamConfig {
+	adaptiveQuality?: boolean;
 	quality?: number; // 1-100
 	fps?: number; // 1-60
 	autoReconnect?: boolean;
@@ -105,6 +111,11 @@ export class VideoStreamClient {
 	private frameTimestamps: number[] = [];
 	private metricsInterval: number | null = null;
 	private reconnectTimeout: number | null = null;
+	private qualityController = new JpegQualityController();
+	private supportsQualityControl = false;
+	private lastMetricTime = 0;
+	private lastMetricFrames = 0;
+	private lastMetricBytes = 0;
 
 	// Callbacks
 	private onFrameCallback: ((frame: DecodedFrame) => void) | null = null;
@@ -114,11 +125,13 @@ export class VideoStreamClient {
 
 	constructor(config: StreamConfig = {}) {
 		this.config = {
+			adaptiveQuality: config.adaptiveQuality ?? true,
 			quality: config.quality ?? 85,
 			fps: config.fps ?? 30,
 			autoReconnect: config.autoReconnect ?? true,
 			reconnectDelay: config.reconnectDelay ?? 2000
 		};
+		this.qualityController = new JpegQualityController(this.config.quality);
 	}
 
 	/**
@@ -228,7 +241,7 @@ export class VideoStreamClient {
 
 		this.setState('disconnected');
 		this.metrics.connected = false;
-		this.onMetricsCallback?.(this.metrics);
+		this.onMetricsCallback?.({ ...this.metrics });
 	}
 
 	/**
@@ -312,6 +325,11 @@ export class VideoStreamClient {
 	}
 
 	private handleOpen(): void {
+		this.lastMetricTime = Date.now();
+		this.lastMetricFrames = this.metrics.framesReceived;
+		this.lastMetricBytes = this.metrics.bytesReceived;
+		this.supportsQualityControl = false;
+		this.qualityController = new JpegQualityController(this.config.quality);
 		console.log('[VideoStream] Connected');
 		this.setState('connected');
 		this.metrics.connected = true;
@@ -353,6 +371,7 @@ export class VideoStreamClient {
 				const magic = view.getUint32(0, true);
 				
 				if (magic === MAGIC_NUMBER) {
+					this.supportsQualityControl = true;
 					// Complex format with header
 					const frame = decodeFrame(arrayBuffer);
 					jpegBlob = frame.jpegData;
@@ -487,23 +506,33 @@ export class VideoStreamClient {
 			}, this.config.reconnectDelay);
 		}
 
-		this.onMetricsCallback?.(this.metrics);
+		this.onMetricsCallback?.({ ...this.metrics });
 	}
 
 	private startMetricsUpdates(): void {
 		// Update metrics every second
 		this.metricsInterval = window.setInterval(() => {
 			this.updateMetrics();
-			this.onMetricsCallback?.(this.metrics);
+			this.onMetricsCallback?.({ ...this.metrics });
 		}, 1000);
 	}
 
 	private updateMetrics(): void {
-		// Calculate FPS
-		if (this.frameTimestamps.length >= 2) {
-			const elapsed = (this.frameTimestamps[this.frameTimestamps.length - 1] - this.frameTimestamps[0]) / 1000;
-			this.metrics.fps = this.frameTimestamps.length / elapsed;
+		const now = Date.now();
+		const elapsed = (now - this.lastMetricTime) / 1000;
+		if (elapsed > 0) {
+			this.metrics.fps = (this.metrics.framesReceived - this.lastMetricFrames) / elapsed;
+			this.metrics.bitrateBps = (this.metrics.bytesReceived - this.lastMetricBytes) * 8 / elapsed;
+			this.lastMetricTime = now;
+			this.lastMetricFrames = this.metrics.framesReceived;
+			this.lastMetricBytes = this.metrics.bytesReceived;
+			if (this.config.adaptiveQuality && this.supportsQualityControl && (typeof document === 'undefined' || !document.hidden)) {
+				const quality = this.qualityController.update(this.metrics.fps, this.config.fps);
+				if (quality !== this.config.quality) this.setQuality(quality);
+			}
 		}
+		this.metrics.quality = this.config.quality;
+		this.metrics.targetFps = this.config.fps;
 
 		// Calculate latency statistics
 		if (this.latencyHistory.length > 0) {
@@ -565,147 +594,4 @@ export const videoStreamManager = new VideoStreamManager();
 // WebRTC Streaming Client
 // ─────────────────────────────────────────────────────────────────────────────
 
-type WebRtcState = 'disconnected' | 'connecting' | 'connected' | 'error';
-
-/** Maps HTTP error status codes to human-readable messages */
-function webRtcErrorMessage(status: number): string {
-	switch (status) {
-		case 400: return 'Camera not started — click Start first';
-		case 404: return 'Camera not found';
-		case 429: return 'Too many viewers — try MJPEG mode';
-		case 503: return 'ROS not connected';
-		case 500: return 'Stream error — retrying in 5s';
-		default:  return `Stream error (HTTP ${status})`;
-	}
-}
-
-export class WebRtcStreamClient {
-	private pc: RTCPeerConnection | null = null;
-	private state: WebRtcState = 'disconnected';
-
-	private onStateChangeCallback: ((state: WebRtcState) => void) | null = null;
-	private onErrorCallback: ((err: Error & { status?: number }) => void) | null = null;
-
-	onStateChange(cb: (state: WebRtcState) => void): void {
-		this.onStateChangeCallback = cb;
-	}
-
-	onError(cb: (err: Error & { status?: number }) => void): void {
-		this.onErrorCallback = cb;
-	}
-
-	private setState(s: WebRtcState): void {
-		this.state = s;
-		this.onStateChangeCallback?.(s);
-	}
-
-	getState(): WebRtcState {
-		return this.state;
-	}
-
-	/**
-	 * Establish a WebRTC connection.
-	 * @param offerUrl  Full URL to POST the SDP offer to (e.g. http://…/webrtc/offer)
-	 * @param videoEl   <video> element that will receive the remote stream
-	 * @param fps       Desired framerate sent in the offer body (default 30)
-	 */
-	async connect(offerUrl: string, videoEl: HTMLVideoElement, fps = 30): Promise<void> {
-		if (this.state === 'connected' || this.state === 'connecting') {
-			console.warn('[WebRtcStreamClient] Already connected or connecting');
-			return;
-		}
-
-		this.setState('connecting');
-
-		const pc = new RTCPeerConnection({ iceServers: [] });
-		this.pc = pc;
-
-		// Attach incoming video stream to the <video> element
-		pc.ontrack = (event) => {
-			if (event.streams?.[0]) {
-				videoEl.srcObject = event.streams[0];
-			}
-		};
-
-		pc.onconnectionstatechange = () => {
-			if (pc.connectionState === 'connected') {
-				this.setState('connected');
-			} else if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
-				this.setState('disconnected');
-			}
-		};
-
-		// Receive-only — we send no video
-		pc.addTransceiver('video', { direction: 'recvonly' });
-
-		// Create and set local offer
-		const offer = await pc.createOffer();
-		await pc.setLocalDescription(offer);
-
-		// Wait for ICE gathering to complete (with 2 s fallback)
-		await new Promise<void>((resolve) => {
-			if (pc.iceGatheringState === 'complete') {
-				resolve();
-				return;
-			}
-			const onchange = () => {
-				if (pc.iceGatheringState === 'complete') {
-					pc.removeEventListener('icegatheringstatechange', onchange);
-					resolve();
-				}
-			};
-			pc.addEventListener('icegatheringstatechange', onchange);
-			setTimeout(resolve, 2000);
-		});
-
-		// POST the offer to the backend
-		let res: Response;
-		try {
-			res = await fetch(offerUrl, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					sdp: pc.localDescription!.sdp,
-					type: pc.localDescription!.type,
-					fps
-				})
-			});
-		} catch (fetchErr) {
-			this.setState('error');
-			const e = fetchErr instanceof Error ? fetchErr : new Error(String(fetchErr));
-			this.onErrorCallback?.(e);
-			throw e;
-		}
-
-		if (!res.ok) {
-			this.setState('error');
-			const body = await res.json().catch(() => ({}));
-			const msg = body.detail ?? webRtcErrorMessage(res.status);
-			const err = Object.assign(new Error(msg), { status: res.status });
-			this.onErrorCallback?.(err);
-			throw err;
-		}
-
-		const answer = await res.json();
-		await pc.setRemoteDescription({ type: answer.type, sdp: answer.sdp });
-		// State will be set to 'connected' via onconnectionstatechange, but
-		// set it here too as a fast-path for implementations that check immediately.
-		this.setState('connected');
-	}
-
-	/**
-	 * Close the WebRTC peer connection and notify the server.
-	 * @param deleteUrl  Full URL to DELETE (e.g. http://…/webrtc)
-	 */
-	async disconnect(deleteUrl: string): Promise<void> {
-		this.pc?.close();
-		this.pc = null;
-		this.setState('disconnected');
-		try {
-			await fetch(deleteUrl, { method: 'DELETE' });
-		} catch (e) {
-			// Best-effort — don't throw on server-side cleanup failure
-			console.warn('[WebRtcStreamClient] DELETE failed:', e);
-		}
-	}
-}
+export { WebRtcStreamClient, WEBRTC_TARGET_FPS } from './webRtcStreamClient.ts';

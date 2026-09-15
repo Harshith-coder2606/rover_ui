@@ -1,35 +1,51 @@
-import { writable, derived } from "svelte/store";
-import * as roverApi from "$lib/services/roverApi";
+import { writable } from "svelte/store";
+import * as roverApi from "../services/roverApi.js";
 
 // API connection status
 export const apiStatus = writable("disconnected"); // 'connected' | 'disconnected' | 'connecting' | 'error'
-export const roverApiUrl = writable("http://192.168.1.3:6767");
+export const roverApiUrl = writable(roverApi.DEFAULT_API_URL);
 
 // Command history for logging
 export const commandHistory = writable([]);
 
 // Auto-connect on initialization
 let autoConnectAttempted = false;
+let connectionAttempt = 0;
 
-// Test API connection
-export async function testConnection(url) {
+async function connect(url, automatic = false) {
+    const attempt = ++connectionAttempt;
+    const normalizedUrl = url.trim().replace(/\/+$/, "");
+    apiStatus.set("connecting");
+
     try {
-        apiStatus.set("connecting");
-        roverApiUrl.set(url);
+        const response = await fetch(`${normalizedUrl}/api/status`, {
+            method: "GET",
+            signal: AbortSignal.timeout(automatic ? 3000 : 5000),
+        });
 
-        // Test the connection
-        const response = await fetch(`${url}/api/status`);
+        // A newer connection or a disconnect supersedes this response.
+        if (attempt !== connectionAttempt) return false;
+
         if (response.ok) {
+            // Configure requests BEFORE connected subscribers discover cameras
+            // or poll ROS; the badge and the service must refer to the same host.
+            roverApi.setApiBaseUrl(normalizedUrl);
+            roverApiUrl.set(normalizedUrl);
             apiStatus.set("connected");
             return true;
-        } else {
-            apiStatus.set("error");
-            return false;
         }
     } catch (error) {
-        apiStatus.set("error");
-        return false;
+        if (attempt !== connectionAttempt) return false;
     }
+
+    apiStatus.set(automatic ? "disconnected" : "error");
+    return false;
+}
+
+// A manual attempt also supersedes the delayed startup auto-connect.
+export function testConnection(url) {
+    autoConnectAttempted = true;
+    return connect(url);
 }
 
 // Auto-connect to default URL
@@ -37,27 +53,14 @@ export async function autoConnect() {
     if (autoConnectAttempted) return;
     autoConnectAttempted = true;
 
-    const defaultUrl = "http://192.168.1.3:6767";
+    const defaultUrl = roverApi.DEFAULT_API_URL;
     console.log("[API] Attempting auto-connect to", defaultUrl);
 
-    try {
-        const response = await fetch(`${defaultUrl}/api/status`, {
-            method: "GET",
-            // Short timeout for auto-connect
-            signal: AbortSignal.timeout(3000),
-        });
-
-        if (response.ok) {
-            apiStatus.set("connected");
-            roverApiUrl.set(defaultUrl);
-            console.log("[API] Auto-connected successfully");
-            return true;
-        }
-    } catch (error) {
-        console.log("[API] Auto-connect failed, waiting for manual connection");
-    }
-
-    return false;
+    const connected = await connect(defaultUrl, true);
+    console.log(connected
+        ? "[API] Auto-connected successfully"
+        : "[API] Auto-connect did not connect; manual connection is available");
+    return connected;
 }
 
 // Initialize auto-connect (call this on app startup)
@@ -70,6 +73,8 @@ if (typeof window !== "undefined") {
 
 // Disconnect from rover
 export function disconnectFromRover() {
+    autoConnectAttempted = true;
+    connectionAttempt++;
     apiStatus.set("disconnected");
 }
 

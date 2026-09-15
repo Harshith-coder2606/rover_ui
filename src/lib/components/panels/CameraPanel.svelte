@@ -8,9 +8,15 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import { onMount } from 'svelte';
+	import { selectCameraMode } from '$lib/services/cameraStreamProfile.js';
+	import { WEBRTC_TARGET_FPS, type WebRtcMetrics } from '$lib/services/webRtcStreamClient';
 	
 	// Camera state - Svelte 5 runes
 	let cameras = $state<any[]>([]);
+	let cameraFormats = $state<Map<string, any[]>>(new Map());
+	let cameraFps = $state<Map<string, number>>(new Map());
+	let rtcMetrics = $state<Map<string, WebRtcMetrics>>(new Map());
+	let webrtcStates = $state<Map<string, string>>(new Map());
 	let activeCameras = $state<Set<string>>(new Set());
 	let loading = $state(false);
 	let error = $state<string | null>(null);
@@ -113,6 +119,7 @@
 		await Promise.all(cameras.map(async (camera) => {
 			try {
 				const result = await roverApi.getSupportedResolutions(camera.name);
+				cameraFormats.set(camera.name, result.formats || []);
 				if (result.formats?.length > 0) {
 					// Flatten resolutions from all formats, removing duplicates
 					const allResolutions = result.formats
@@ -147,15 +154,33 @@
 		
 		// Trigger reactivity
 		supportedResolutions = new Map(supportedResolutions);
+		cameraFormats = new Map(cameraFormats);
 		selectedResolutions = new Map(selectedResolutions);
 	}
 	
+	function cameraMode(cameraName: string) {
+		const size = selectedResolutions.get(cameraName) || { width: 1280, height: 720 };
+		const camera = cameras.find(cam => cam.name === cameraName);
+		return selectCameraMode(cameraFormats.get(cameraName), size.width, size.height, camera?.default_fps);
+	}
+
+	function targetFps(cameraName: string) {
+		if (streamingModes.get(cameraName) === 'webrtc') return WEBRTC_TARGET_FPS;
+		return (activeCameras.has(cameraName) ? cameraFps.get(cameraName) : undefined) ?? cameraMode(cameraName).fps;
+	}
+
 	// Start a camera
 	async function startCamera(cameraName: string) {
 		try {
 			// Get selected resolution, or use default
 			const resolution = selectedResolutions.get(cameraName) || { width: 1280, height: 720 };
-			const result = await roverApi.startCamera(cameraName, resolution.width, resolution.height, 30);
+			const profile = cameraMode(cameraName);
+			const result = await roverApi.startCamera(cameraName, resolution.width, resolution.height, profile.fps, profile.pixelFormat);
+			const actualFps = result.camera?.fps;
+			cameraFps.set(cameraName, Number.isFinite(actualFps) && actualFps > 0 ? Math.min(profile.fps, actualFps) : profile.fps);
+			cameraFps = new Map(cameraFps);
+			mjpegParams.set(cameraName, { fps: Math.round(cameraFps.get(cameraName) ?? profile.fps), quality: mjpegParams.get(cameraName)?.quality ?? 80 });
+			mjpegParams = new Map(mjpegParams);
 			activeCameras.add(cameraName);
 			activeCameras = new Set(activeCameras);
 			
@@ -206,7 +231,7 @@
 		// Create WebSocket client
 		const client = new VideoStreamClient({
 			quality: 85,
-			fps: 30,
+			fps: targetFps(cameraName),
 			autoReconnect: true
 		});
 		
@@ -274,6 +299,10 @@
 
 	// Start WebRTC stream for a camera
 	function startWebRtcStream(cameraName: string) {
+		if (!activeCameras.has(cameraName) || (streamingModes.get(cameraName) || 'webrtc') !== 'webrtc') return;
+		const previous = webrtcClients.get(cameraName);
+		if (previous && ['connecting', 'connected'].includes(previous.getState())) return;
+		void previous?.disconnect();
 		const videoEl = videoRefs[cameraName];
 		if (!videoEl) {
 			showFeedbackMsg(`WebRTC: video element not ready for '${cameraName}'`, 'error');
@@ -285,20 +314,38 @@
 		if (existing) { clearTimeout(existing); webrtcRetryTimers.delete(cameraName); }
 
 		const client = new WebRtcStreamClient();
+		webrtcClients.set(cameraName, client);
+		webrtcClients = new Map(webrtcClients);
+		rtcMetrics.delete(cameraName);
+		rtcMetrics = new Map(rtcMetrics);
 
 		client.onStateChange((s) => {
+			if (webrtcClients.get(cameraName) !== client) return;
+			webrtcStates.set(cameraName, s);
+			webrtcStates = new Map(webrtcStates);
+			if (s !== 'connected') {
+				rtcMetrics.delete(cameraName);
+				rtcMetrics = new Map(rtcMetrics);
+			}
 			console.log(`[CameraPanel] WebRTC '${cameraName}' state: ${s}`);
 		});
 
 		client.onError((err) => {
 			console.error(`[CameraPanel] WebRTC error for '${cameraName}':`, err);
 		});
+		client.onMetrics(metrics => {
+			if (webrtcClients.get(cameraName) !== client) return;
+			rtcMetrics.set(cameraName, metrics);
+			rtcMetrics = new Map(rtcMetrics);
+		});
 
 		const offerUrl = roverApi.getCameraWebRtcOfferUrl(cameraName);
-		client.connect(offerUrl, videoEl, 30).then(() => {
+		client.connect(offerUrl, videoEl, targetFps(cameraName)).then(() => {
+			if (webrtcClients.get(cameraName) !== client) return;
 			webrtcRetryCounts.delete(cameraName);
 			startWebRtcStatusPolling(cameraName);
 		}).catch((err: Error & { status?: number }) => {
+			if (err.name === 'AbortError' || webrtcClients.get(cameraName) !== client) return;
 			if (err.status === 429) {
 				// Capacity full — fall back to MJPEG
 				showFeedbackMsg(`Too many WebRTC viewers — falling back to MJPEG for '${cameraName}'`, 'error');
@@ -310,7 +357,7 @@
 				webrtcRetryCounts.set(cameraName, retries);
 				if (retries <= 5) {
 					const delay = Math.min(5000 * Math.pow(2, retries - 1), 60000);
-					showFeedbackMsg(`Stream error — retrying '${cameraName}' in ${delay / 1000}s`, 'error');
+					showFeedbackMsg(`${err.message} — retrying '${cameraName}' in ${delay / 1000}s`, 'error');
 					webrtcRetryTimers.set(cameraName, setTimeout(() => {
 						if (activeCameras.has(cameraName) && streamingModes.get(cameraName) === 'webrtc') {
 							startWebRtcStream(cameraName);
@@ -326,21 +373,33 @@
 			}
 		});
 
-		webrtcClients.set(cameraName, client);
-		webrtcClients = new Map(webrtcClients);
+	}
+
+	function webRtcLabel(cameraName: string) {
+		const state = webrtcStates.get(cameraName);
+		if (state === 'connected') return (rtcMetrics.get(cameraName)?.fps ?? 0) > 0 ? 'LIVE WebRTC' : 'WebRTC · waiting for frames';
+		if (state === 'error') return 'WebRTC · connection failed';
+		if (state === 'disconnected') return 'WebRTC · disconnected';
+		return 'WebRTC · connecting';
 	}
 
 	// Stop WebRTC stream for a camera
 	async function stopWebRtcStream(cameraName: string) {
+		const retry = webrtcRetryTimers.get(cameraName);
+		if (retry) clearTimeout(retry);
+		webrtcRetryTimers.delete(cameraName);
+		webrtcRetryCounts.delete(cameraName);
 		const client = webrtcClients.get(cameraName);
-		if (!client) return;
-		const deleteUrl = roverApi.getCameraWebRtcDeleteUrl(cameraName);
-		await client.disconnect(deleteUrl);
 		webrtcClients.delete(cameraName);
 		webrtcClients = new Map(webrtcClients);
+		webrtcStates.delete(cameraName);
+		webrtcStates = new Map(webrtcStates);
 		stopWebRtcStatusPolling(cameraName);
 		webrtcStatuses.delete(cameraName);
+		rtcMetrics.delete(cameraName);
+		rtcMetrics = new Map(rtcMetrics);
 		webrtcStatuses = new Map(webrtcStatuses);
+		await client?.disconnect();
 	}
 
 	// Start polling WebRTC connection status badge every 5 s
@@ -351,11 +410,7 @@
 				const st = await roverApi.getCameraWebRtcStatus(cameraName);
 				webrtcStatuses.set(cameraName, { active_connections: st.active_connections, max_connections: st.max_connections ?? 5 });
 				webrtcStatuses = new Map(webrtcStatuses);
-				// If full and we're in webrtc mode, fall back
-				if (st.active_connections >= (st.max_connections ?? 5) && streamingModes.get(cameraName) === 'webrtc') {
-					showFeedbackMsg(`Full — WebRTC unavailable for '${cameraName}', switching to MJPEG`, 'error');
-					await setStreamingMode(cameraName, 'mjpeg');
-				}
+				// Capacity limits new offers, not viewers already connected.
 			} catch { /* ignore polling errors */ }
 		}, 5000);
 		webrtcStatusIntervals.set(cameraName, id);
@@ -623,6 +678,13 @@
 						{/if}
 					</div>
 
+					<div class="px-3 py-1 text-xs text-muted-foreground">
+						FPS target: {targetFps(camera.name)} · {mode === 'webrtc' ? 'WebRTC target' : cameraMode(camera.name).verified ? 'camera mode' : 'reported/default rate'} · stream ceiling 60
+						{#if mode === 'webrtc' && rtcMetrics.has(camera.name)}
+							{@const rm = rtcMetrics.get(camera.name)!}
+							<div>{rm.fps.toFixed(1)} FPS / {rm.targetFps} · {(rm.bitrateBps / 1000000).toFixed(2)} Mbps · {rm.adaptiveQuality ? `Auto quality ${Math.round(rm.scale * 100)}% size` : 'Auto bitrate; quality needs backend update'}</div>
+						{/if}
+					</div>
 					<!-- Resolution Selector -->
 					<div class="px-3 py-2 bg-card/50 border-b border-border flex items-center justify-between">
 						<label for={`resolution-${camera.name}`} class="text-xs text-muted-foreground">
@@ -661,6 +723,7 @@
 					<div class="px-3 py-1.5 bg-black/30 border-b border-border flex items-center justify-between text-xs font-mono">
 						<div class="flex items-center gap-3">
 							<span class="text-muted-foreground">FPS: <span class="text-sky-500">{metrics.fps.toFixed(1)}</span></span>
+							<span class="text-muted-foreground">{((metrics.bitrateBps ?? 0) / 1000000).toFixed(2)} Mbps · Auto JPEG {metrics.quality ?? 85}</span>
 							<span class="text-muted-foreground">Latency: <span class="text-sky-500">{metrics.avgLatencyMs.toFixed(0)}ms</span></span>
 							<span class="text-muted-foreground">Frames: <span class="text-sky-500">{metrics.framesReceived}</span></span>
 						</div>
@@ -694,6 +757,12 @@
 					<!-- Camera Stream or Placeholder -->
 					<div class="relative bg-black aspect-video">
 						{#if activeCameras.has(camera.name)}
+							{@const measuredFps = mode === 'webrtc' ? rtcMetrics.get(camera.name)?.fps : mode === 'websocket' ? metrics?.fps : undefined}
+							<div class="absolute top-2 right-2 z-10 rounded bg-black/80 px-2 py-1 text-xs font-mono tabular-nums text-white pointer-events-none"
+								title={mode === 'mjpeg' ? 'Measured FPS is unavailable for an MJPEG image stream' : 'Delivered frames per second / target frames per second'}>
+								{measuredFps == null ? '—' : measuredFps.toFixed(1)} FPS
+								<span class="text-slate-300">/ {mode === 'mjpeg' ? (mjpegParams.get(camera.name)?.fps ?? targetFps(camera.name)) : targetFps(camera.name)} target</span>
+							</div>
 							{#if mode === 'websocket'}
 							<!-- WebSocket Canvas -->
 							{@const resolution = selectedResolutions.get(camera.name) || { width: 1280, height: 720 }}
@@ -716,9 +785,11 @@
 								muted
 								class="w-full h-full object-contain"
 							></video>
-							<div class="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded font-mono flex items-center gap-1">
+							<div class="absolute top-2 left-2 text-white text-xs px-2 py-1 rounded font-mono flex items-center gap-1"
+								class:bg-green-600={webRtcLabel(camera.name) === 'LIVE WebRTC'}
+								class:bg-slate-700={webRtcLabel(camera.name) !== 'LIVE WebRTC'}>
 								<Radio class="w-3 h-3" />
-								LIVE WebRTC
+								{webRtcLabel(camera.name)}
 							</div>
 							{:else}
 							<!-- MJPEG Image -->

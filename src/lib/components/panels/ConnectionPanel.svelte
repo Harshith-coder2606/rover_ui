@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { Wifi, WifiOff, Power } from '@lucide/svelte';
 	import { apiStatus, roverApiUrl, testConnection, disconnectFromRover } from '$lib/stores/apiStore';
-	import { setApiBaseUrl } from '$lib/services/roverApi';
+	import { DEFAULT_API_URL } from '$lib/services/roverApi';
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	
-	let apiUrl = $state('http://192.168.1.3:6767'); // Default API URL
+	let apiUrl = $state(DEFAULT_API_URL);
 	
 	let isConnected = $derived($apiStatus === 'connected');
 	let hasError = $derived($apiStatus === 'error');
@@ -15,10 +15,7 @@
 		if (isConnected) {
 			disconnectFromRover();
 		} else {
-			const success = await testConnection(apiUrl);
-			if (success) {
-				setApiBaseUrl(apiUrl);
-			}
+			await testConnection(apiUrl);
 		}
 	}
 </script>

@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { onMount, onDestroy, tick } from 'svelte';
-  import { VideoStreamClient, WebRtcStreamClient } from '$lib/services/videoStreamService';
-  import { getApiBaseUrl, startCamera, stopCamera } from '$lib/services/roverApi';
+  import { onDestroy, tick } from 'svelte';
+  import { VideoStreamClient, WebRtcStreamClient, WEBRTC_TARGET_FPS } from '$lib/services/videoStreamService';
+  import { getApiBaseUrl, startCamera, stopCamera, getSupportedResolutions } from '$lib/services/roverApi';
+  import { selectCameraMode } from '$lib/services/cameraStreamProfile.js';
 
   let { 
     config = $bindable(), 
@@ -15,9 +16,7 @@
   let selectedResolution = $state(config.resolution || '720p');
 
   // FPS Tracking
-  let actualFps = $state(0);
-  let frames = 0;
-  let fpsInterval;
+  let actualFps = $state<number | null>(null);
   let streamError = $state('');
 
   let videoRef = $state(null);
@@ -26,7 +25,6 @@
 
   let wsClient = null;
   let rtcClient = null;
-  let renderLoopId = null;
 
   function baseUrl() {
     return getApiBaseUrl();
@@ -42,7 +40,8 @@
 
   let isRos = $derived(selectedCamera === 'ros');
   let streamQuality = $derived(selectedResolution === '1080p' ? 90 : selectedResolution === '720p' ? 80 : 60);
-  let streamFps = $derived(30);
+  let streamFps = $state(30);
+  let rtcMetrics = $state(null);
 
   function mjpegUrl() {
     if (isRos) {
@@ -75,13 +74,12 @@
       wsClient = null;
     }
     if (rtcClient) {
-      await rtcClient.disconnect(webrtcDeleteUrl());
+      const previous = rtcClient;
       rtcClient = null;
+      await previous.disconnect(webrtcDeleteUrl());
     }
-    if (renderLoopId) {
-      cancelAnimationFrame(renderLoopId);
-      renderLoopId = null;
-    }
+    rtcMetrics = null;
+    actualFps = null;
     
     if (stopBackend && !isRos && selectedCamera) {
       try {
@@ -105,7 +103,11 @@
       else if (selectedResolution === '480p') { width = 640; height = 480; }
       
       try {
-        await startCamera(selectedCamera, width, height, streamFps);
+        const camera = availableCameras.find(cam => (cam.id || cam.name) === selectedCamera);
+        const capabilities = await getSupportedResolutions(selectedCamera).catch(() => ({ formats: [] }));
+        const profile = selectCameraMode(capabilities.formats, width, height, camera?.default_fps);
+        const started = await startCamera(selectedCamera, width, height, profile.fps, profile.pixelFormat);
+        streamFps = started.camera?.fps > 0 ? Math.min(profile.fps, started.camera.fps) : profile.fps;
         // Give backend a short moment to initialize capture before attaching clients.
         await new Promise((resolve) => setTimeout(resolve, 150));
       } catch (e: any) {
@@ -121,6 +123,10 @@
     } else if (config.streamType === 'websocket') {
       if (!canvasRef) return;
       wsClient = new VideoStreamClient({ quality: streamQuality, fps: streamFps, autoReconnect: true });
+      const currentClient = wsClient;
+      wsClient.onMetrics(metrics => {
+        if (wsClient === currentClient) actualFps = metrics.fps;
+      });
       wsClient.onError((err) => { streamError = err.message || 'WebSocket Error'; });
       
       if (isRos) {
@@ -129,19 +135,16 @@
         await wsClient.connect(selectedCamera, canvasRef);
       }
       
-      let lastTime = performance.now();
-      const trackCanvasFps = () => {
-        frames++;
-        renderLoopId = requestAnimationFrame(trackCanvasFps);
-      };
-      renderLoopId = requestAnimationFrame(trackCanvasFps);
-
     } else if (config.streamType === 'webrtc') {
       if (!videoRef) return;
       rtcClient = new WebRtcStreamClient();
+      const currentClient = rtcClient;
+      rtcClient.onMetrics(metrics => {
+        if (rtcClient === currentClient) { rtcMetrics = metrics; actualFps = metrics.fps; }
+      });
       rtcClient.onError((err) => { streamError = err.message || 'WebRTC Error'; });
       try {
-        await rtcClient.connect(webrtcOfferUrl(), videoRef, streamFps);
+        await rtcClient.connect(webrtcOfferUrl(), videoRef, WEBRTC_TARGET_FPS);
       } catch (err: any) {
         streamError = err.message ?? 'WebRTC failed';
       }
@@ -176,10 +179,6 @@
     };
   }
 
-  function handleFrame() {
-    frames++;
-  }
-
   $effect(() => {
     if (config.isConfigured) {
       initStream();
@@ -191,15 +190,7 @@
     };
   });
 
-  onMount(() => {
-    fpsInterval = setInterval(() => {
-      actualFps = frames;
-      frames = 0;
-    }, 1000);
-  });
-
   onDestroy(() => {
-    if (fpsInterval) clearInterval(fpsInterval);
     teardownStream(true);
   });
 </script>
@@ -256,7 +247,10 @@
     </div>
   {:else}
     <div class="absolute top-2 left-2 z-10 bg-black/70 px-2 py-1 rounded text-xs font-mono text-green-400 shadow backdrop-blur-sm flex flex-col gap-1">
-      <div>{config.cameraId} | {config.streamType.toUpperCase()} | FPS: {actualFps}</div>
+      <div class="tabular-nums" title={config.streamType === 'mjpeg' ? 'Measured FPS is unavailable for an MJPEG image stream' : 'Delivered frames per second / target frames per second'}>{config.cameraId} | {config.streamType.toUpperCase()} | {actualFps == null ? '—' : actualFps.toFixed(1)} FPS / {config.streamType === 'webrtc' ? (rtcMetrics?.targetFps ?? WEBRTC_TARGET_FPS) : streamFps} target</div>
+      {#if rtcMetrics}
+        <div>Target {rtcMetrics.targetFps} FPS · {(rtcMetrics.bitrateBps / 1000000).toFixed(2)} Mbps · {rtcMetrics.adaptiveQuality ? `Auto ${Math.round(rtcMetrics.scale * 100)}% size` : 'Auto bitrate'}</div>
+      {/if}
       {#if streamError}
         <div class="text-red-400">{streamError}</div>
       {/if}
@@ -275,7 +269,6 @@
           bind:this={imgRef}
           alt="Camera Stream" 
           class="h-full w-full object-contain"
-          onload={handleFrame}
         />
       {:else if config.streamType === 'webrtc'}
         <video 
@@ -284,19 +277,6 @@
           autoplay 
           playsinline 
           muted
-          onplay={() => {
-            const updateFps = () => {
-              handleFrame();
-              if (videoRef && !videoRef.paused && !videoRef.ended) {
-                if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
-                  videoRef.requestVideoFrameCallback(updateFps);
-                } else {
-                  requestAnimationFrame(updateFps);
-                }
-              }
-            };
-            updateFps();
-          }}
         ></video>
       {:else if config.streamType === 'websocket'}
         <canvas

@@ -66,6 +66,7 @@
       const result = await detectCameras();
       if (result && result.cameras) {
         const hwCams = result.cameras.map((c) => ({
+          ...c,
           id: c.name,
           label: c.name,
           type: 'hardware'

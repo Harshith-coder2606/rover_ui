@@ -3,7 +3,6 @@
 	import { isFullscreen } from '$lib/stores/fullscreenStore';
 	
 	// Panels
-    import AndroidPanel from '$lib/components/panels/AndroidSensorPanel.svelte';
     import ROSCameraPanel from '$lib/components/panels/RosCameraPanel.svelte';
 	import CameraPanel from '$lib/components/panels/CameraPanel.svelte';
 	import FullscreenCameraView from '$lib/components/panels/FullscreenCameraView.svelte';
@@ -16,16 +15,10 @@
 	
 	// Sections
 	import DashboardHeader from '$lib/components/sections/DashboardHeader.svelte';
-	import MissionTabs from '$lib/components/sections/MissionTabs.svelte';
 	import FeedbackMessage from '$lib/components/sections/FeedbackMessage.svelte';
 	import DrivingControls from '$lib/components/sections/DrivingControls.svelte';
 	import NavigationSection from '$lib/components/sections/NavigationSection.svelte';
 	import RoboticArm from '$lib/components/sections/RoboticArm.svelte';
-	
-	// Mission Panels
-	import ABExPanel from '$lib/components/panels/missions/ABExPanel.svelte';
-	import RADOPanel from '$lib/components/panels/missions/RADOPanel.svelte';
-	import IDMOPanel from '$lib/components/panels/missions/IDMOPanel.svelte';
 	
 	// Modals
 	import AutonomousModeModal from '$lib/components/modals/AutonomousModeModal.svelte';
@@ -44,9 +37,6 @@
 	// Science drawer state
 	let showScienceDrawer = $state(false);
 	let microscopeActive = $state(false);
-	
-	// Mission state
-	let activeMission = $state('general');
 	
 	// Feedback message state
 	let feedbackComponent = $state<any>(null);
@@ -93,10 +83,7 @@
 		<!-- Feedback Message -->
 		<FeedbackMessage bind:this={feedbackComponent} bind:show={showFeedback} />
 		
-		<DashboardHeader {activeMission} />
-		
-		<!-- Mission Tabs -->
-		<MissionTabs {activeMission} onMissionChange={(mission) => activeMission = mission} />
+		<DashboardHeader />
 
 		<!-- Camera Section (Full Width) -->
 		<section class="mb-6">
@@ -123,15 +110,6 @@
 				
 				<!-- <TeensyTopicPanel /> -->
 				
-        <AndroidPanel />
-				<!-- Mission-Specific Panel -->
-				{#if activeMission === 'abex'}
-					<ABExPanel />
-				{:else if activeMission === 'rado'}
-					<RADOPanel />
-				{:else if activeMission === 'idmo'}
-					<IDMOPanel />
-				{/if}
 			</div>
 
             <div class="space-y-6">

@@ -90,10 +90,12 @@
 		client.onError((e) => console.error(`[RosCameraPanel] WebRTC error:`, e));
 
 		const offerUrl = `${api.getApiBaseUrl()}/api/nav/ros/camera/webrtc/offer`;
-		client.connect(offerUrl, videoRef, 30).then(() => {
+		client.connect(offerUrl, videoRef).then(() => {
+			if (webrtcClient !== client) return;
 			webrtcRetryCount = 0;
 			startWebRtcStatusPolling();
 		}).catch((err: Error & { status?: number }) => {
+			if (err.name === 'AbortError' || webrtcClient !== client) return;
 			if (err.status === 429) {
 				error = 'Too many viewers — falling back to MJPEG';
 				setStreamingMode('mjpeg');
@@ -120,12 +122,14 @@
 	}
 
 	async function stopWebRtcStream() {
-		if (!webrtcClient) return;
-		const deleteUrl = `${api.getApiBaseUrl()}/api/nav/ros/camera/webrtc`;
-		await webrtcClient.disconnect(deleteUrl);
+		if (webrtcRetryTimer) clearTimeout(webrtcRetryTimer);
+		webrtcRetryTimer = null;
+		webrtcRetryCount = 0;
+		const client = webrtcClient;
 		webrtcClient = null;
 		stopWebRtcStatusPolling();
 		webrtcStatus = null;
+		await client?.disconnect();
 	}
 
 	function startWebRtcStatusPolling() {
@@ -134,10 +138,7 @@
 			try {
 				const st = await api.getRosCameraWebRtcStatus();
 				webrtcStatus = { active_connections: st.active_connections, max_connections: st.max_connections ?? 5 };
-				if (st.active_connections >= (st.max_connections ?? 5) && streamingMode === 'webrtc') {
-					error = 'Full — WebRTC unavailable, switching to MJPEG';
-					await setStreamingMode('mjpeg');
-				}
+				// Capacity limits new offers, not viewers already connected.
 			} catch { /* ignore */ }
 		}, 5000);
 	}

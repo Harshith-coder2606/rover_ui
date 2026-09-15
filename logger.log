@@ -1,0 +1,2175 @@
+============ GOING WITH 1471 =============
+--- stack ---
+[<0>] ep_poll+0x33f/0x390
+[<0>] do_epoll_wait+0xdb/0x100
+[<0>] do_compat_epoll_pwait.part.0+0xf/0x90
+[<0>] __x64_sys_epoll_pwait+0x91/0x150
+[<0>] x64_sys_call+0x23f3/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+ep_poll
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1471
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1471
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	19081
+nonvoluntary_ctxt_switches:	309
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1471 ==============
+
+============ GOING WITH 1773 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1773
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1773
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	1
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1773 ==============
+
+============ GOING WITH 1774 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1774
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1774
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	2
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1774 ==============
+
+============ GOING WITH 1775 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1775
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1775
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	4
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1775 ==============
+
+============ GOING WITH 1776 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1776
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1776
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	18
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1776 ==============
+
+============ GOING WITH 1777 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1777
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1777
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	25
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1777 ==============
+
+============ GOING WITH 1778 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1778
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1778
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	41
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1778 ==============
+
+============ GOING WITH 1779 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1779
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1779
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	1
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1779 ==============
+
+============ GOING WITH 1780 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1780
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1780
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	2
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1780 ==============
+
+============ GOING WITH 1781 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1781
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1781
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	6
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1781 ==============
+
+============ GOING WITH 1782 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1782
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1782
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	9
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1782 ==============
+
+============ GOING WITH 1783 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1783
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1783
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	6
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1783 ==============
+
+============ GOING WITH 1784 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1784
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1784
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	10
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1784 ==============
+
+============ GOING WITH 1785 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1785
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1785
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	1
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1785 ==============
+
+============ GOING WITH 1786 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1786
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1786
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	4
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1786 ==============
+
+============ GOING WITH 1787 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1787
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1787
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	17
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1787 ==============
+
+============ GOING WITH 1788 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1788
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1788
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	41
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1788 ==============
+
+============ GOING WITH 1789 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1789
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1789
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	84
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1789 ==============
+
+============ GOING WITH 1790 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1790
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1790
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	22
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1790 ==============
+
+============ GOING WITH 1791 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1791
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1791
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	24
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1791 ==============
+
+============ GOING WITH 1883 =============
+--- stack ---
+[<0>] do_select+0x66a/0x820
+[<0>] core_sys_select+0x2ac/0x510
+[<0>] do_pselect.constprop.0+0xe9/0x190
+[<0>] __x64_sys_pselect6+0x68/0xa0
+[<0>] x64_sys_call+0x2462/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+do_select
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1883
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1883
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	284
+nonvoluntary_ctxt_switches:	8
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1883 ==============
+
+============ GOING WITH 1884 =============
+--- stack ---
+[<0>] io_sq_thread+0x5d7/0x610
+[<0>] ret_from_fork+0x44/0x70
+[<0>] ret_from_fork_asm+0x1b/0x30
+
+--- wchan ---
+io_sq_thread
+--- status ---
+Name:	iou-sqp-1471
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1884
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1884
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	fffffffffffbfeff
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	0
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1884 ==============
+
+============ GOING WITH 1886 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1886
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1886
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	2
+nonvoluntary_ctxt_switches:	0
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1886 ==============
+
+============ GOING WITH 1887 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1887
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1887
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	0
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1887 ==============
+
+============ GOING WITH 1888 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1888
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1888
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	0
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1888 ==============
+
+============ GOING WITH 1889 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1889
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1889
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	0
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1889 ==============
+
+============ GOING WITH 1890 =============
+--- stack ---
+[<0>] ep_poll+0x33f/0x390
+[<0>] do_epoll_wait+0xdb/0x100
+[<0>] __x64_sys_epoll_wait+0x6f/0x110
+[<0>] x64_sys_call+0xf19/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+ep_poll
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1890
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1890
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	11
+nonvoluntary_ctxt_switches:	1
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1890 ==============
+
+============ GOING WITH 1891 =============
+--- stack ---
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x155/0x1d0
+[<0>] futex_wait+0x74/0x120
+[<0>] do_futex+0x16d/0x230
+[<0>] __x64_sys_futex+0x95/0x200
+[<0>] x64_sys_call+0x117b/0x2480
+[<0>] do_syscall_64+0x81/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+--- wchan ---
+futex_wait_queue
+--- status ---
+Name:	python3
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1471
+Ngid:	0
+Pid:	1891
+PPid:	1350
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 20 24 27 30 44 46 122 135 136 1000 
+NStgid:	1471
+NSpid:	1891
+NSpgid:	1350
+NSsid:	1350
+Kthread:	0
+VmPeak:	 1685780 kB
+VmSize:	 1685780 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  149940 kB
+VmRSS:	  149940 kB
+RssAnon:	   84508 kB
+RssFile:	   65432 kB
+RssShmem:	       0 kB
+VmData:	 1001352 kB
+VmStk:	     132 kB
+VmExe:	    2772 kB
+VmLib:	  251956 kB
+VmPTE:	     844 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	28
+SigQ:	0/62385
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000081001000
+SigCgt:	0000000100004002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	5
+nonvoluntary_ctxt_switches:	1
+x86_Thread_features:	
+x86_Thread_features_locked:	
+
+============== DONE WITH 1891 ==============
+

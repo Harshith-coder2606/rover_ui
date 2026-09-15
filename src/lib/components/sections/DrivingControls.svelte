@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { Bot, ArrowUp, ArrowDown, RotateCcw, RotateCw, Move, Square, Cpu, Wifi } from '@lucide/svelte';
 	import { isRosConnected, publishCmdVel, stopRover, commandedVelocity } from '$lib/stores/rosStore';
-	import { logCommand } from '$lib/stores/apiStore';
+	import { logCommand, apiStatus, roverApiUrl } from '$lib/stores/apiStore';
+	import { GameDriveController, isTypingTarget } from '$lib/services/gameDriveController.js';
+	import { DriveCommandQueue } from '$lib/services/driveCommandQueue.js';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, untrack } from 'svelte';
 	import { 
 		connectArduino, 
 		disconnectArduino, 
@@ -19,6 +21,103 @@
 	
 	// Control mode: 'ros' or 'arduino'
 	let controlMode = $state<'ros' | 'arduino'>('ros');
+	let gameControls = $state(false);
+	let cruiseLocked = $state(false);
+	let driveError = $state('');
+	let switchingControls = $state(false);
+	const gameDrive = new GameDriveController();
+	let gameInterval: ReturnType<typeof setInterval> | null = null;
+	let lastGamePublish = 0;
+	let gameUrl = '';
+	const gameSender = new DriveCommandQueue(async (command) => {
+		if (command.url !== $roverApiUrl) throw new Error('Rover connection changed');
+		if (command.mode === 'ros') {
+			await publishCmdVel(command.linear, command.angular, AbortSignal.timeout(1000));
+		} else {
+			const speed = Math.round(Math.max(Math.abs(command.linear), Math.abs(command.angular)) * 255);
+			const direction = command.linear > 0 ? 'w' : command.linear < 0 ? 's' : command.angular > 0 ? 'a' : 'd';
+			await sendArduinoCommand(speed ? `${direction}:${speed}` : 'x:0', AbortSignal.timeout(1000));
+		}
+	}, (error, command) => {
+		gameDrive.stop();
+		syncGameState();
+		driveError = `Drive command failed: ${error.message}. Motion cleared; check the rover before retrying.`;
+		// Best effort emergency stop after a failed movement request; no retry loop.
+		if (command.url === $roverApiUrl) {
+			if (command.mode === 'arduino') void stopArduino().catch(console.error);
+			else void stopRover();
+		}
+	});
+
+	function syncGameState() {
+		const state = gameDrive.snapshot();
+		linearVelocity = state.linear;
+		angularVelocity = state.angular;
+		cruiseLocked = state.locked;
+		activeRosKeys = new Set(state.keys);
+		arduinoSpeed = Math.round(Math.max(Math.abs(state.linear), Math.abs(state.angular)) * 255);
+		activeArduinoKey = state.keys[0] ?? '';
+		updateMovementDescription();
+		commandedVelocity.set({ linear: state.linear, angular: state.angular });
+	}
+
+	function sendGameState() {
+		lastGamePublish = performance.now();
+		return gameSender.submit({ ...gameDrive.snapshot(), mode: controlMode, url: gameUrl });
+	}
+
+	function stopGame() {
+		const moving = gameDrive.linear !== 0 || gameDrive.angular !== 0 || gameDrive.locked;
+		gameDrive.stop();
+		syncGameState();
+		return moving ? sendGameState() : Promise.resolve();
+	}
+
+	async function toggleGameControls() {
+		if (switchingControls) return;
+		switchingControls = true;
+		try {
+			if (gameControls) await stopGame();
+			else if (controlMode === 'ros') {
+				if (linearVelocity !== 0 || angularVelocity !== 0 || rosPublishInterval) stopRosMovement();
+			}
+			else await stopArduinoMovement();
+			gameDrive.stop();
+			gameDrive.singleDirection = controlMode === 'arduino';
+			gameUrl = $roverApiUrl;
+			syncGameState();
+			driveError = '';
+			gameControls = !gameControls;
+		} finally { switchingControls = false; }
+	}
+
+	function gameSafetyStop() {
+		if (gameControls) void stopGame();
+	}
+
+	function handleVisibilityChange() { if (document.hidden) gameSafetyStop(); }
+	function handleFocusIn(event: FocusEvent) { if (isTypingTarget(event.target)) gameSafetyStop(); }
+
+	function handleGameKeyDown(e: KeyboardEvent) {
+		const key = e.key.toLowerCase();
+		// Cancel cruise even when the new key belongs to a form or browser shortcut.
+		if (cruiseLocked && !e.repeat && (key !== 'l' || isTypingTarget(e.target))) void stopGame();
+		if (isTypingTarget(e.target) || e.ctrlKey || e.metaKey || e.altKey || switchingControls || driveError) return;
+		if ($apiStatus !== 'connected' || !(controlMode === 'ros' ? $isRosConnected : arduinoConnected)) { gameSafetyStop(); return; }
+		if (gameDrive.keyDown(key, performance.now(), { repeat: e.repeat })) {
+			e.preventDefault();
+			syncGameState();
+			void sendGameState();
+		}
+	}
+
+	$effect(() => {
+		// Subscribe to connection identity as well as status; never carry cruise to another rover.
+		const url = $roverApiUrl;
+		const connected = $apiStatus === 'connected' && (controlMode === 'ros' ? $isRosConnected : arduinoConnected);
+		if (gameControls && !connected) untrack(gameSafetyStop);
+		return () => untrack(gameSafetyStop);
+	});
 	
 	// Arduino connection state
 	let arduinoConnected = $state(false);
@@ -219,6 +318,13 @@
 	
 	// Toggle control mode
 	async function toggleControlMode() {
+		if (switchingControls) return;
+		switchingControls = true;
+		try {
+		if (gameControls) {
+			await stopGame();
+			gameControls = false;
+		}
 		const newMode = controlMode === 'ros' ? 'arduino' : 'ros';
 		
 		if (newMode === 'arduino') {
@@ -251,9 +357,12 @@
 				onEmergencyStop(`Failed to disconnect Arduino: ${error.message}`, 'error');
 			}
 		}
+		} finally { switchingControls = false; }
 	}
-	
+
 	function handleKeyDown(e: KeyboardEvent) {
+		if (gameControls) { handleGameKeyDown(e); return; }
+		if (switchingControls || gameDrive.blocked.has(e.key.toLowerCase())) return;
 		// Ignore if typing in an input
 		if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
 			return;
@@ -337,6 +446,11 @@
 	}
 	
 	function handleKeyUp(e: KeyboardEvent) {
+		if (gameControls) {
+			if (gameDrive.keyUp(e.key, performance.now())) { syncGameState(); void sendGameState(); }
+			return;
+		}
+		gameDrive.keyUp(e.key, performance.now());
 		// Ignore if typing in an input
 		if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
 			return;
@@ -412,6 +526,7 @@
 	
 	// Emergency stop via ROS or Arduino
 	async function handleEmergencyStop() {
+		if (gameControls) void stopGame();
 		try {
 			logCommand({ type: 'EMERGENCY_STOP' }, 'sent');
 			
@@ -439,6 +554,18 @@
 	onMount(() => {
 		window.addEventListener('keydown', handleKeyDown);
 		window.addEventListener('keyup', handleKeyUp);
+		window.addEventListener('blur', gameSafetyStop);
+		window.addEventListener('pagehide', gameSafetyStop);
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+		document.addEventListener('focusin', handleFocusIn);
+		gameInterval = setInterval(() => {
+			if (!gameControls || switchingControls || driveError) return;
+			const wasMoving = gameDrive.linear !== 0 || gameDrive.angular !== 0 || gameDrive.locked;
+			gameDrive.tick(performance.now());
+			syncGameState();
+			const moving = gameDrive.linear !== 0 || gameDrive.angular !== 0;
+			if ((moving && performance.now() - lastGamePublish >= publishRate) || (wasMoving && !moving)) void sendGameState();
+		}, 50);
 		
 		// Check Arduino status periodically when in Arduino mode
 		arduinoCheckInterval = setInterval(() => {
@@ -449,6 +576,12 @@
 	});
 	
 	onDestroy(() => {
+		gameSafetyStop();
+		if (gameInterval) clearInterval(gameInterval);
+		window.removeEventListener('blur', gameSafetyStop);
+		window.removeEventListener('pagehide', gameSafetyStop);
+		document.removeEventListener('visibilitychange', handleVisibilityChange);
+		document.removeEventListener('focusin', handleFocusIn);
 		window.removeEventListener('keydown', handleKeyDown);
 		window.removeEventListener('keyup', handleKeyUp);
 		
@@ -517,6 +650,20 @@
 	</Card.Header>
 	
 	<Card.Content class="p-4">
+		<div class="mb-4 space-y-2 rounded border border-border p-3">
+			<div class="flex items-center justify-between gap-2">
+				<Button role="switch" aria-checked={gameControls} variant={gameControls ? 'default' : 'outline'} size="sm" disabled={switchingControls} onclick={toggleGameControls}>Game controls</Button>
+				<Badge variant={cruiseLocked ? 'warning' : 'secondary'}>{gameControls ? (cruiseLocked ? 'CRUISE LOCKED' : 'Hold to drive') : 'Classic controls'}</Badge>
+			</div>
+			{#if gameControls}
+				<p class="text-xs text-muted-foreground">Hold WASD to accelerate; longer holds accelerate faster. Release to stop that axis. L locks speed and direction; any other key cancels the lock. Space / X / Esc stops.</p>
+				<p class="text-xs text-muted-foreground">Leaving this window or focusing a text field stops motion and clears the lock.</p>
+				{#if controlMode === 'arduino'}<p class="text-xs text-muted-foreground">Arduino supports one direction at a time. L is reserved for cruise lock here; use Classic controls for IJKL camera keys.</p>{/if}
+			{:else}
+				<p class="text-xs text-muted-foreground">Original step controls: releasing a key keeps the current speed; Space stops.</p>
+			{/if}
+			{#if driveError}<p role="alert" class="text-xs text-destructive">{driveError} Toggle Game controls off and on to re-arm.</p>{/if}
+		</div>
 		<!-- Status Display -->
 		<div class="status-bar">
 			<div class="status-item">
@@ -583,7 +730,7 @@
 					
 					<!-- Row 3: Stop -->
 					<div></div>
-					<button class="key stop-key wide-key" title="Stop">
+					<button class="key stop-key wide-key" title="Stop" onclick={() => gameControls ? stopGame() : stopArduinoMovement()}>
 						<span class="key-label">SPACE / X</span>
 						<span class="key-icon"><Square class="w-3 h-3" /></span>
 					</button>
@@ -591,7 +738,7 @@
 				</div>
 				
 				<div class="mode-hint">
-					<span class="hint-text">Hold keys to increase speed (0-255)</span>
+					<span class="hint-text">{gameControls ? 'Progressive hold acceleration (0–255)' : 'Hold keys to increase speed (0-255)'}</span>
 				</div>
 			</div>
 			
@@ -648,7 +795,7 @@
 				</div>
 			</div>
 			<div class="arduino-speed-hint">
-				<span class="hint-text">Hold W/A/S/D to increase speed in steps of {arduinoSpeedStep}</span>
+				<span class="hint-text">{gameControls ? 'Release to stop · L locks current motion' : `Hold W/A/S/D to increase speed in steps of ${arduinoSpeedStep}`}</span>
 			</div>
 		</div>
 		{:else}
@@ -690,7 +837,7 @@
 					
 					<!-- Row 3: Stop -->
 					<div></div>
-					<button class="key stop-key wide-key" title="Stop All Movement">
+					<button class="key stop-key wide-key" title="Stop All Movement" onclick={() => gameControls ? stopGame() : stopRosMovement()}>
 						<span class="key-label">SPACE</span>
 						<span class="key-icon"><Square class="w-3 h-3" /></span>
 					</button>
@@ -698,7 +845,7 @@
 				</div>
 				
 				<div class="mode-hint">
-					<span class="hint-text">Hold keys to increase velocity in steps of {velocityStep}</span>
+					<span class="hint-text">{gameControls ? 'Progressive acceleration · Release to stop · L locks motion' : `Hold keys to increase velocity in steps of ${velocityStep}`}</span>
 				</div>
 			</div>
 		</div>

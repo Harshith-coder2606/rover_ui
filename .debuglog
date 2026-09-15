@@ -1,0 +1,81 @@
+administratror@rover-avvb:~$ systemctl status uv.service
+● uv.service - Rover API Endpoint
+     Loaded: loaded (/etc/systemd/system/uv.service; enabled; vendor preset: enabled)
+     Active: active (running) since Thu 2026-08-27 15:35:59 IST; 9min ago
+   Main PID: 1350 (uv)
+      Tasks: 30 (limit: 18715)
+     Memory: 277.0M
+        CPU: 10.720s
+     CGroup: /system.slice/uv.service
+             ├─1350 /home/administratror/.local/bin/uv run main.py
+             └─1471 /home/administratror/Projects/RoverAPI_Endpoint/.venv/bin/python3 main.py
+
+
+administratror@rover-avvb:~$ pstree -ap $(systemctl show -p MainPID --value uv.service)
+uv,1350 run main.py
+  ├─python3,1471 main.py
+  │   ├─{python3},1773
+  │   ├─{python3},1774
+  │   ├─{python3},1775
+  │   ├─{python3},1776
+  │   ├─{python3},1777
+  │   ├─{python3},1778
+  │   ├─{python3},1779
+  │   ├─{python3},1780
+  │   ├─{python3},1781
+  │   ├─{python3},1782
+  │   ├─{python3},1783
+  │   ├─{python3},1784
+  │   ├─{python3},1785
+  │   ├─{python3},1786
+  │   ├─{python3},1787
+  │   ├─{python3},1788
+  │   ├─{python3},1789
+  │   ├─{python3},1790
+  │   ├─{python3},1791
+  │   ├─{python3},1883
+  │   ├─{python3},1884
+  │   ├─{python3},1886
+  │   ├─{python3},1887
+  │   ├─{python3},1888
+  │   ├─{python3},1889
+  │   ├─{python3},1890
+  │   └─{python3},1891
+  └─{uv},1413
+
+
+  administratror@rover-avvb:~$ ps -L -p "$PID" -o pid,tid,stat,wchan:32,etime,comm
+    PID     TID STAT WCHAN                                ELAPSED COMMAND
+   1350    1350 Ssl  futex_wait_queue                       11:16 uv
+   1350    1413 Ssl  ep_poll                                11:16 main2
+
+   administratror@rover-avvb:~$ ps -L -p 1471 -o pid,tid,stat,wchan:32,etime,pcpu,comm
+    PID     TID STAT WCHAN                                ELAPSED %CPU COMMAND
+   1471    1471 Sl   ep_poll                                12:09  1.0 python3
+   1471    1773 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1774 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1775 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1776 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1777 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1778 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1779 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1780 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1781 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1782 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1783 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1784 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1785 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1786 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1787 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1788 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1789 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1790 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1791 Sl   futex_wait_queue                       12:07  0.0 python3
+   1471    1883 Sl   do_select                              12:05  0.0 python3
+   1471    1884 Sl   io_sq_thread                           12:04  0.0 iou-sqp-1471
+   1471    1886 Sl   futex_wait_queue                       12:04  0.0 python3
+   1471    1887 Sl   futex_wait_queue                       12:04  0.0 python3
+   1471    1888 Sl   futex_wait_queue                       12:04  0.0 python3
+   1471    1889 Sl   futex_wait_queue                       12:04  0.0 python3
+   1471    1890 Sl   ep_poll                                12:04  0.0 python3
+   1471    1891 Sl   futex_wait_queue                       12:04  0.0 python3

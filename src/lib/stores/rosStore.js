@@ -87,7 +87,7 @@ export async function stopRover() {
 }
 
 // Publish command velocity to ROS
-export async function publishCmdVel(linearX, angularZ) {
+export async function publishCmdVel(linearX, angularZ, signal) {
 	try {
 		commandedVelocity.set({ linear: linearX, angular: angularZ });
 		const velocityCommand = {
@@ -98,7 +98,7 @@ export async function publishCmdVel(linearX, angularZ) {
 			angular_y: 0.0,
 			angular_z: angularZ
 		};
-		const response = await api.publishCmdVel(velocityCommand);
+		const response = await api.publishCmdVel(velocityCommand, signal);
 		return response;
 	} catch (error) {
 		console.error('Error publishing cmd_vel:', error);

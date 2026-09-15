@@ -3,11 +3,12 @@
  * Handles all HTTP requests to the FastAPI backend
  */
 
-// Default API base URL - can be configured
-let API_BASE_URL = 'http://10.103.111.189:6767';
+// Shared by the request service, connection store, and connection form.
+export const DEFAULT_API_URL = 'http://192.168.1.3:6767';
+let API_BASE_URL = DEFAULT_API_URL;
 
 export function setApiBaseUrl(url) {
-    API_BASE_URL = url.replace(/\/$/, ''); // Remove trailing slash
+    API_BASE_URL = url.trim().replace(/\/+$/, '');
 }
 
 export function getApiBaseUrl() {
@@ -497,11 +498,12 @@ export async function getSupportedResolutions(cameraName) {
 /**
  * Start a specific camera
  */
-export async function startCamera(cameraName, width = 1280, height = 720, fps = 30) {
+export async function startCamera(cameraName, width = 1280, height = 720, fps = 30, pixelFormat = undefined) {
     const formData = new FormData();
     formData.append('width', width.toString());
     formData.append('height', height.toString());
     formData.append('fps', fps.toString());
+    if (pixelFormat) formData.append('pixel_format', pixelFormat);
     
     const url = `${API_BASE_URL}/api/nav/cameras/${cameraName}/start`;
     const response = await fetch(url, {
@@ -878,10 +880,11 @@ export async function disconnectFromRos() {
 /**
  * Publish velocity command to /cmd_vel
  */
-export async function publishCmdVel(velocityCommand) {
+export async function publishCmdVel(velocityCommand, signal) {
     return apiRequest('/api/nav/ros/cmd_vel', {
         method: 'POST',
-        body: JSON.stringify(velocityCommand)
+        body: JSON.stringify(velocityCommand),
+        signal
     });
 }
 
@@ -1056,10 +1059,11 @@ export async function getArduinoStatus() {
 /**
  * Send raw command to Arduino (W, S, A, D, X)
  */
-export async function sendArduinoCommand(command) {
+export async function sendArduinoCommand(command, signal) {
     return apiRequest('/api/nav/arduino/cmd', {
         method: 'POST',
-        body: JSON.stringify({ command })
+        body: JSON.stringify({ command }),
+        signal
     });
 }
 
@@ -1085,24 +1089,4 @@ export async function stopArduino() {
  */
 export async function reconnectArduino() {
     return apiRequest('/api/nav/arduino/reconnect', { method: 'POST' });
-}
-
-// ============================================
-// ANDROID SENSOR ENDPOINTS (/api/android/)
-// ============================================
-
-/**
- * Get Android sensor connection status and latest readings
- */
-export async function getAndroidSensorStatus() {
-    return apiRequest('/api/android/sensors/status', { method: 'GET' });
-}
-
-/**
- * Get WebSocket URL for Android sensor streaming
- */
-export function getAndroidSensorWebSocketUrl() {
-    // Convert HTTP base URL to WebSocket URL
-    const wsBaseUrl = API_BASE_URL.replace(/^http/, 'ws');
-    return `${wsBaseUrl}/api/android/sensors/ws`;
 }
