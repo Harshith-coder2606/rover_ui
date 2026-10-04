@@ -7,7 +7,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { selectCameraMode } from '$lib/services/cameraStreamProfile.js';
 	import { WEBRTC_TARGET_FPS, type WebRtcMetrics } from '$lib/services/webRtcStreamClient';
 	import { OpticalFlowService } from '$lib/services/opticalFlowService';
@@ -302,6 +302,8 @@
 
 	// Start optical-flow diagnostics on a WebRTC RGB camera
 	function startOpticalFlow(cameraName: string) {
+		if (!activeCameras.has(cameraName) || streamingModes.get(cameraName) !== 'webrtc' ||
+			webrtcClients.get(cameraName)?.getState() !== 'connected') return;
 		if (!opticalFlowReady) {
 			console.warn(
 				`[CameraPanel] Optical flow is not ready for '${cameraName}'`
@@ -331,9 +333,14 @@
 								dx: result.meanDx.toFixed(2),
 								dy: result.meanDy.toFixed(2),
 								magnitude: result.meanMagnitude.toFixed(2),
-								topDy: result.topMeanDy.toFixed(2),
-								middleDy: result.middleMeanDy.toFixed(2),
-								bottomDy: result.bottomMeanDy.toFixed(2)
+								topDy: result.topMeanDy?.toFixed(2) ?? 'unavailable',
+								middleDy: result.middleMeanDy?.toFixed(2) ?? 'unavailable',
+								bottomDy: result.bottomMeanDy?.toFixed(2) ?? 'unavailable',
+								topPoints: result.topPoints,
+								middlePoints: result.middlePoints,
+								bottomPoints: result.bottomPoints,
+								mediaTime: result.mediaTime,
+								deltaTime: result.deltaTime
 							}
 						);
 					}
@@ -374,6 +381,7 @@
 			webrtcStates.set(cameraName, s);
 			webrtcStates = new Map(webrtcStates);
 			if (s !== 'connected') {
+				opticalFlowService.stop(cameraName);
 				rtcMetrics.delete(cameraName);
 				rtcMetrics = new Map(rtcMetrics);
 			}
@@ -550,6 +558,7 @@
 	
 	// Stop all cameras
 	async function stopAllCameras() {
+		opticalFlowService.stopAll();
 		try {
 			// Stop all WebSocket streams
 			wsClients.forEach((client) => client.disconnect());
@@ -589,33 +598,26 @@
 		return streamMetrics.get(cameraName) || null;
 	}
 	
-	// Lifecycle - using $effect instead of onMount/onDestroy
+	// Track API status only; camera discovery reads should not retrigger cleanup.
 	$effect(() => {
-	if ($apiStatus === 'connected') {
-		detectCameras();
+		if ($apiStatus === 'connected') untrack(() => { void detectCameras(); });
+		else untrack(() => { if (activeCameras.size > 0) void stopAllCameras(); });
+	});
 
-		void opticalFlowService.initialize()
-			.then(() => {
-				opticalFlowReady = true;
-				console.log('[CameraPanel] Optical flow service ready');
-			})
-			.catch((err) => {
-				console.error(
-					'[CameraPanel] Optical flow initialization failed:',
-					err
-				);
-			});
-	}
-
-	// Cleanup on destroy
-	return () => {
-		opticalFlowService.stopAll();
-
-		if (activeCameras.size > 0) {
-			stopAllCameras();
-		}
-	};
-});
+	onMount(() => {
+		let mounted = true;
+		void opticalFlowService.initialize().then(() => {
+			if (!mounted) return;
+			opticalFlowReady = true;
+			// A camera may connect while OpenCV is still loading.
+			webrtcClients.forEach((_, cameraName) => startOpticalFlow(cameraName));
+		}).catch(err => console.error('[CameraPanel] Optical flow initialization failed:', err));
+		return () => {
+			mounted = false;
+			opticalFlowService.stopAll();
+			if (activeCameras.size > 0) void stopAllCameras();
+		};
+	});
 
 	// Ensure WebRTC peers are released on page unload
 	onMount(() => {

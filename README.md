@@ -1,5 +1,33 @@
 # Rover UI — Rolling-Shutter / Jello Reduction Handoff
 
+## PR #2 review updates (4 October 2026)
+
+The handoff below records the initial prototype. Review fixes now load OpenCV as a
+local, lazy browser asset (the original generated-code import failed the production
+build), share initialization across panel instances, and start cameras that connected
+before initialization finished. Stop All, peer failure, mode changes and unmount
+release trackers and cancel video callbacks. Native frame allocations are released
+on processing errors as well as successful frames.
+
+Reported `points` and the next LK reference contain only accepted tracks. Non-finite
+forward/backward errors and out-of-frame tracks are rejected. FAST selects at most
+240 strong corners away from the border to bound processing cost; grid selection
+and minimum-distance feature distribution remain future work. Low-feature warnings
+are no longer emitted on every detection attempt.
+
+Band means are `null` / logged as `unavailable` when there are no accepted tracks;
+`topPoints`, `middlePoints`, and `bottomPoints` identify coverage. `mediaTime` and
+`deltaTime` are seconds from decoded-frame metadata; dx/dy remain pixels per frame
+at 320×240. Repeated timestamps are skipped and timeline resets or gaps above 0.5 s
+re-seed tracking. `fbRetention` now measures acceptance before MAD filtering, while
+`trackingRetention` measures final acceptance.
+
+Validation: `npm test` includes synthetic images processed by the actual OpenCV
+runtime, filter and allocation-error regressions, and camera lifecycle tests.
+`npm run build` must also pass. Real rover motion, feature distribution under blur,
+IMU synchronization and rolling-shutter correction still require hardware validation.
+
+
 ## 1. Project context
 
 This document is a handoff for the current work on **post-processing the rover camera feed to measure and eventually reduce rolling-shutter ("jello") distortion**.
