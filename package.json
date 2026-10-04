@@ -21,6 +21,7 @@
   "type": "module",
   "dependencies": {
     "@lucide/svelte": "^1.34.0",
+    "@techstark/opencv-js": "^5.0.0-release.1",
     "bits-ui": "^2.15.4",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",

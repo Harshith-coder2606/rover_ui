@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	import { selectCameraMode } from '$lib/services/cameraStreamProfile.js';
 	import { WEBRTC_TARGET_FPS, type WebRtcMetrics } from '$lib/services/webRtcStreamClient';
+	import { OpticalFlowService } from '$lib/services/opticalFlowService';
 	
 	// Camera state - Svelte 5 runes
 	let cameras = $state<any[]>([]);
@@ -55,7 +56,9 @@
 	let canvasRefs: Record<string, HTMLCanvasElement | undefined> = $state({});
 	// Video refs per camera (WebRTC)
 	let videoRefs: Record<string, HTMLVideoElement | undefined> = $state({});
-	
+	// Optical flow diagnostics for RGB WebRTC cameras
+	const opticalFlowService = new OpticalFlowService();
+	let opticalFlowReady = $state(false);
 	// Resolution state per camera
 	let supportedResolutions = $state<Map<string, Array<{width: number, height: number}>>>(new Map());
 	let selectedResolutions = $state<Map<string, {width: number, height: number}>>(new Map());
@@ -297,6 +300,53 @@
 		showFeedbackMsg(`Switched to ${newMode.toUpperCase()} mode`, 'success');
 	}
 
+	// Start optical-flow diagnostics on a WebRTC RGB camera
+	function startOpticalFlow(cameraName: string) {
+		if (!opticalFlowReady) {
+			console.warn(
+				`[CameraPanel] Optical flow is not ready for '${cameraName}'`
+			);
+			return;
+		}
+
+		const videoEl = videoRefs[cameraName];
+
+		if (!videoEl) {
+			console.warn(
+				`[CameraPanel] No video element for optical flow: '${cameraName}'`
+			);
+			return;
+		}
+
+		try {
+			opticalFlowService.start(
+				cameraName,
+				videoEl,
+				(result) => {
+					if (result.frameCount % 30 === 0) {
+						console.log(
+							`[OpticalFlow] ${cameraName}`,
+							{
+								points: result.trackedPoints,
+								dx: result.meanDx.toFixed(2),
+								dy: result.meanDy.toFixed(2),
+								magnitude: result.meanMagnitude.toFixed(2),
+								topDy: result.topMeanDy.toFixed(2),
+								middleDy: result.middleMeanDy.toFixed(2),
+								bottomDy: result.bottomMeanDy.toFixed(2)
+							}
+						);
+					}
+				}
+			);
+		} catch (err) {
+			console.error(
+				`[CameraPanel] Failed to start optical flow for '${cameraName}':`,
+				err
+			);
+		}
+	}
+
 	// Start WebRTC stream for a camera
 	function startWebRtcStream(cameraName: string) {
 		if (!activeCameras.has(cameraName) || (streamingModes.get(cameraName) || 'webrtc') !== 'webrtc') return;
@@ -342,8 +392,12 @@
 		const offerUrl = roverApi.getCameraWebRtcOfferUrl(cameraName);
 		client.connect(offerUrl, videoEl, targetFps(cameraName)).then(() => {
 			if (webrtcClients.get(cameraName) !== client) return;
+
 			webrtcRetryCounts.delete(cameraName);
 			startWebRtcStatusPolling(cameraName);
+
+			// Start diagnostics on the decoded WebRTC video
+			startOpticalFlow(cameraName);
 		}).catch((err: Error & { status?: number }) => {
 			if (err.name === 'AbortError' || webrtcClients.get(cameraName) !== client) return;
 			if (err.status === 429) {
@@ -387,20 +441,30 @@
 	async function stopWebRtcStream(cameraName: string) {
 		const retry = webrtcRetryTimers.get(cameraName);
 		if (retry) clearTimeout(retry);
+
 		webrtcRetryTimers.delete(cameraName);
 		webrtcRetryCounts.delete(cameraName);
+
+		// Stop optical-flow processing
+		opticalFlowService.stop(cameraName);
+
 		const client = webrtcClients.get(cameraName);
+
 		webrtcClients.delete(cameraName);
 		webrtcClients = new Map(webrtcClients);
+
 		webrtcStates.delete(cameraName);
 		webrtcStates = new Map(webrtcStates);
+
 		stopWebRtcStatusPolling(cameraName);
+
 		webrtcStatuses.delete(cameraName);
 		rtcMetrics.delete(cameraName);
 		rtcMetrics = new Map(rtcMetrics);
 		webrtcStatuses = new Map(webrtcStatuses);
+
 		await client?.disconnect();
-	}
+	}  
 
 	// Start polling WebRTC connection status badge every 5 s
 	function startWebRtcStatusPolling(cameraName: string) {
@@ -527,17 +591,31 @@
 	
 	// Lifecycle - using $effect instead of onMount/onDestroy
 	$effect(() => {
-		if ($apiStatus === 'connected') {
-			detectCameras();
+	if ($apiStatus === 'connected') {
+		detectCameras();
+
+		void opticalFlowService.initialize()
+			.then(() => {
+				opticalFlowReady = true;
+				console.log('[CameraPanel] Optical flow service ready');
+			})
+			.catch((err) => {
+				console.error(
+					'[CameraPanel] Optical flow initialization failed:',
+					err
+				);
+			});
+	}
+
+	// Cleanup on destroy
+	return () => {
+		opticalFlowService.stopAll();
+
+		if (activeCameras.size > 0) {
+			stopAllCameras();
 		}
-		
-		// Cleanup on destroy
-		return () => {
-			if (activeCameras.size > 0) {
-				stopAllCameras();
-			}
-		};
-	});
+	};
+});
 
 	// Ensure WebRTC peers are released on page unload
 	onMount(() => {
